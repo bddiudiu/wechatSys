@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.alaso.wechat.server.dao.UserMapper">
+
+    <resultMap id="userResultMap" type="user">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="username" property="userName" jdbcType="VARCHAR"/>
+        <result column="nikename" property="nikeName" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="TINYINT"/>
+        <result column="isadmin" property="isAdmin" jdbcType="TINYINT"/>
+        <association property="dept" column="dept_id" select="queryDept"/>
+    </resultMap>
+
+    <resultMap id="deptResultMap" type="dept">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="dept_name" property="deptName" jdbcType="VARCHAR"/>
+        <result column="dept_desc" property="deptDesc" jdbcType="VARCHAR"/>
+        <result column="dept_alias" property="deptAlias" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="roleResultMap" type="role">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="permissionResultMap" type="permission">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="token" property="token" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <association property="role" column="roleId" select="queryRole"/>
+    </resultMap>
+
+    <resultMap id="userRoleResultMap" type="userRole">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <association property="user" column="userId" select="queryUser"/>
+        <association property="role" column="roleId" select="queryRole"/>
+    </resultMap>
+
+
+
+    <insert id="saveUser">
+        INSERT INTO T_SYS_USERS (username,nikename,password,email,sex,isadmin,dept_id)
+        VALUES (#{user.username},#{user.nikename},#{user.password},#{user.email},
+        #{user.sex},#{user.isadmin},#{user.dept.id})
+    </insert>
+
+    <select id="queryUsersByDeptId" resultMap="userResultMap">
+        SELECT tsu.* FROM T_SYS_USERS tsu LEFT JOIN t_sys_dept tsd on tsd.id = tsu.dept_id where tsu.dept_id = #{deptId}
+    </select>
+
+    <update id="updateUserPass">
+        UPDATE T_SYS_USERS SET password = #{user.password} WHERE id = #{id}
+    </update>
+
+    <update id="updateUserNikeName">
+        UPDATE T_SYS_USERS SET nikename = #{user.nikeName} WHERE id = #{id}
+    </update>
+
+    <select id="findByUserName" resultMap="userResultMap">
+        SELECT * from T_SYS_USERS where username = #{userName}
+    </select>
+
+    <select id="findUserById" resultMap="userResultMap">
+        SELECT * FROM T_SYS_USERS WHERE id = #{id}
+    </select>
+
+    <select id="getPermissionsByUserName" resultMap="permissionResultMap">
+        SELECT tsp.*,tsr.name
+        FROM t_sys_permission tsp
+        LEFT JOIN t_sys_role tsr on tsp.roleId = tsr.id
+        LEFT JOIN t_sys_user_role tsur on tsr.id = tsur.roleId
+        LEFT join t_sys_users tsu on tsu.id = tsur.userId
+        where tsu.username = #{userName}
+    </select>
+
+    <select id="getAllPermissionsByUserName" resultMap="permissionResultMap">
+        SELECT tsp.*,tsr.name
+        FROM t_sys_permission tsp
+        LEFT JOIN t_sys_role tsr on tsp.roleId = tsr.id
+        LEFT JOIN t_sys_user_role tsur on tsr.id = tsur.roleId
+        LEFT join t_sys_users tsu on tsu.id = tsur.userId
+        where tsu.username = #{userName}
+    </select>
+
+
+    <select id="queryDept" resultMap="deptResultMap">
+        SELECT * FROM t_sys_dept where id = #{id}
+    </select>
+    <select id="queryRole" resultMap="roleResultMap">
+        SELECT * FROM t_sys_role where id = #{id}
+    </select>
+    <select id="queryUser" resultMap="userResultMap">
+        SELECT * FROM t_sys_users where id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!-- 注解类扫描 -->
+    <context:component-scan base-package="com.alaso.wechat.server"></context:component-scan>
+
+    <!-- 加载项目 properties -->
+    <!-- 加载配置文件 -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:/sys.properties</value>
+                <value>classpath:/db.properties</value>
+                <!--<value>classpath:/wechat.properties</value>-->
+                <!--<value>classpath:/redis.properties</value>-->
+            </list>
+        </property>
+    </bean>
+
+    <!-- 配置spring 同步线程池(主要用于处理启动和关闭服务器时的任务) -->
+    <bean id="synTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+
+    <!-- 配置spring 异步线程池(主要用于处理数据上报的处理任务,一些定时任务等) -->
+    <bean id="taskExecutor"
+          class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <!-- 线程池维护线程的最少数量 -->
+        <property name="corePoolSize" value="500"/>
+        <!-- 线程池维护线程所允许的空闲时间 -->
+        <property name="keepAliveSeconds" value="300"/>
+        <!-- 线程池维护线程的最大数量 -->
+        <property name="maxPoolSize" value="1000"/>
+        <!-- 线程池所使用的缓冲队列 -->
+        <property name="queueCapacity" value="2000"/>
+        <!-- 线程池对拒绝任务(无线程可用)的处理策略 -->
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy"/>
+        </property>
+    </bean>
+
+
+    <!-- 配置哪些类的方法进行事务管理 -->
+    <!--<aop:config proxy-target-class="true">-->
+        <!--<aop:advisor advice-ref="txAdvice"-->
+        <!--pointcut="execution(* com.ntjoy.wechat.service.*.*.*(..))" />-->
+        <!--<aop:advisor-->
+        <!--advice-ref="txAdvice" pointcut="execution(* com.ntjoy.*.service.*.*(..))"/>-->
+    <!--</aop:config>-->
+
+    <!-- database 链接配置模块设置 -->
+    <import resource="applicationContext_dataSource.xml"/>
+    <!-- 定时任务 -->
+    <!--<import resource="applicationContext_task.xml"/>-->
+    <!-- aop -->
+    <!--<import resource="applicationContext_aop.xml"/>-->
+    <!-- 缓存 -->
+    <!--<import resource="applicationContext_redis.xml"/>-->
+</beans>

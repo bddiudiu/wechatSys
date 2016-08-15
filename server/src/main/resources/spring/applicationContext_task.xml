@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	">
+
+	<!-- 红包过期 -->
+	<!--<bean id="disableRedPocketTask" class="com.ntjoy.wechat.job.DisableRedPocketTask"></bean>-->
+	<!--<bean id="disableRedPocketTarget" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+		<!--<property name="targetObject">-->
+			<!--<ref bean="disableRedPocketTask" />-->
+		<!--</property>-->
+		<!--<property name="targetMethod">-->
+			<!--<value>executeTask</value>-->
+		<!--</property>-->
+	<!--</bean>-->
+	<!--<bean id="disableRedPocketTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">-->
+		<!--<property name="jobDetail">-->
+			<!--<ref bean="disableRedPocketTarget" />&lt;!&ndash;执行详情task为上面那个配置的bean &ndash;&gt;-->
+		<!--</property>-->
+		<!--<property name="startDelay">&lt;!&ndash;开始延时时间 &ndash;&gt;-->
+			<!--<value>100</value>-->
+		<!--</property>-->
+		<!--<property name="cronExpression">-->
+			<!--&lt;!&ndash; 每天晚上 7点30分 &ndash;&gt;-->
+			<!--<value>0 0 1 * * ? </value>-->
+		<!--</property>-->
+	<!--</bean>-->
+
+	<!-- 红包发送 -->
+	<!--<bean id="checkRedPocketTask" class="com.ntjoy.wechat.job.CheckRedPocketTask"></bean>
+	<bean id="checkRedPocketTarget" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="checkRedPocketTask" />
+		</property>
+		<property name="targetMethod">
+			<value>executeTask</value>
+		</property>
+	</bean>
+	<bean id="checkRedPocketTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="checkRedPocketTarget" />&lt;!&ndash;执行详情task为上面那个配置的bean &ndash;&gt;
+		</property>
+		<property name="startDelay">&lt;!&ndash;开始延时时间 &ndash;&gt;
+			<value>100</value>
+		</property>
+		<property name="cronExpression">
+			&lt;!&ndash; 每天早上8点 &ndash;&gt;
+			<value>0 0 8 * * ? </value>
+		</property>
+	</bean>-->
+
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<!--<ref local="disableRedPocketTaskTrigger" />-->
+			</list>
+		</property>
+	</bean>
+</beans>
